@@ -29,3 +29,6 @@ build/
 # Archivos de configuración de editor
 *.sublime-workspace
 *.sublime-project
+
+# Archivos del proyecto
+key.ini
