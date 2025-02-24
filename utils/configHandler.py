@@ -1,5 +1,7 @@
 import configparser
 
+import urllib
+
 
 class ConfigHandler:
     def __init__(self, config_file):
@@ -24,4 +26,4 @@ class ConfigHandlerKey(ConfigHandler):
         super().__init__(config_file)
 
     def get_key(self):
-        return self.config.get("PASSWORD", "KEY")
+        return urllib.parse.unquote(self.config.get("PASSWORD", "KEY"))
