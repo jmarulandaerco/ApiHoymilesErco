@@ -1,6 +1,6 @@
 import configparser
 
-import urllib
+import urllib.parse
 
 
 class ConfigHandler:
