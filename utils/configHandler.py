@@ -3,9 +3,7 @@ import configparser
 
 class ConfigHandler:
     def __init__(self, config_file):
-        # Crear una instancia de ConfigParser
         self.config = configparser.ConfigParser()
-        # Leer el archivo de configuración
         self.config.read(config_file)
 
     def get_url(self):
@@ -19,3 +17,11 @@ class ConfigHandler:
 
     def get_data_microinverter(self):
         return self.config.get("ENDPOINT", "DATA_MICROINVERTER")
+
+
+class ConfigHandlerKey(ConfigHandler):
+    def __init__(self, config_file):
+        super().__init__(config_file)
+
+    def get_key(self):
+        return self.config.get("PASSWORD", "KEY")
