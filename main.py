@@ -14,3 +14,4 @@ if __name__ == "__main__":
     hoymiles.get_list_microinverters_per_plant()
     hoymiles.get_list_plants()
     hoymiles.information_processing()
+    print(key)
