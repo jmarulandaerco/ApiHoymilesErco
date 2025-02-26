@@ -10,12 +10,18 @@ class OnomondoReport:
     config_data: ConfigHandler
     key: str
 
-    def get_list_plants(self) -> list:
+    # def __init__(self, logger, config_data, key): #esto reemplaza al data class
+    #     self.logger = logger
+    #     self.config_data = config_data
+    #     self.key = key
+
+    def __get_list_plants(self) -> list:
         self.logger.info(
-            f"Error en AnotherClass{self.config_data.get_data_microinverter()}"
+            f"Error en el INTENTO{self.config_data.get_data_microinverter()}"
         )
 
     def get_list_microinverters_per_plant(self) -> list:
+        self.__get_list_plants()
         self.logger.info(
             f"Error en AnotherClass{self.config_data.get_plant_list()}"
         )

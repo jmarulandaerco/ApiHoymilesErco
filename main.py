@@ -12,6 +12,7 @@ if __name__ == "__main__":
     hoymiles = OnomondoReport(logger=logger, config_data=config_handler, key=key)
     # hoymiles.get_data_microinverters_per_plant()
     # hoymiles.get_list_microinverters_per_plant()
-    hoymiles.get_list_plants()
+    #hoymiles.get_list_plants()
+    hoymiles.get_list_microinverters_per_plant()
     # hoymiles.information_processing()
     print(key)

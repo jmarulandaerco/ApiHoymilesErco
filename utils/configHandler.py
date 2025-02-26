@@ -1,12 +1,18 @@
 import configparser
 
+from dataclasses import dataclass, field
 import urllib.parse
 
-
+@dataclass
 class ConfigHandler:
-    def __init__(self, config_file):
-        self.config = configparser.ConfigParser()
-        self.config.read(config_file)
+    # def __init__(self, config_file):
+    #     self.config = configparser.ConfigParser()
+    #     self.config.read(config_file)
+    config_file: str    
+    config: configparser.ConfigParser = field(init=False)     
+    def __post_init__(self): 
+        self.config = configparser.ConfigParser() 
+        self.config.read(self.config_file)
 
     def get_url(self):
         return self.config.get("ENDPOINT", "URL")
