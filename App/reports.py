@@ -8,7 +8,7 @@ from utils.configHandler import ConfigHandler
 
 
 @dataclass
-class OnomondoReport:
+class HoymileReport:
     logger: logging.Logger
     config_data: ConfigHandler
     key: str

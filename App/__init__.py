@@ -1,2 +1,2 @@
-from .reports import OnomondoReport
+from .reports import HoymileReport
 
