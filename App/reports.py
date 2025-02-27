@@ -43,6 +43,12 @@ class OnomondoReport:
                     break  
 
                 data = response.json()
+                
+                if data["status"] != "0":
+                    # print("Error en la consulta:", data["message"])
+                    self.logger.error(f"Error in the consult: {data["message"]}")
+                    break
+
                 print("Datos recibidos:", data)
 
                 # Obtener lista de estaciones
