@@ -1,8 +1,21 @@
+import os
 import logging
-from dataclasses import dataclass
 
+class CustomFileHandler(logging.FileHandler):
+    def __init__(self, filename, mode='a', maxBytes=500 * 1024 * 1024, encoding=None, delay=False):
+        self.maxBytes = maxBytes
+        super().__init__(filename, mode, encoding, delay)
+    
+    def emit(self, record):
+        try:
+            if os.path.exists(self.baseFilename) and os.path.getsize(self.baseFilename) >= self.maxBytes:
+                self.stream.close()
+                os.remove(self.baseFilename)
+                self.stream = self._open()
+        except Exception:
+            self.handleError(record)
+        super().emit(record)
 
-@dataclass
 class LoggerHandler:
     name: str = __name__
 
@@ -13,7 +26,7 @@ class LoggerHandler:
         console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.INFO)
 
-        file_handler = logging.FileHandler("log.log", mode="a")
+        file_handler = CustomFileHandler("log.log", mode="a", maxBytes=500 * 1024 * 1024)
         file_handler.setLevel(logging.INFO)
 
         formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
