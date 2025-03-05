@@ -159,10 +159,18 @@ class HoymileReport:
         
         all_microinverters = self.get_list_microinverters_per_plant()
 
-        # { 
-        # "station_id": 1325870 , 
-        # "date": "2025-02-25", 
-        # "sn": "106154401367" }
+        for plants in all_microinverters:
+            for microinverters in plants.get("micros_id"):
+                print("Microinversores obtenidos" ,microinverters)
+                data_req =  { 
+                                "station_id": plants.get("id_plant") , 
+                                "date": current_date_formatted, 
+                                "sn": microinverters 
+                            }
+                response = requests.post(url, headers=headers, json=data_req)
+                print(f"informacion micros: {response.json()}")
+                time.sleep(6)
+        
 
     def information_processing(self) -> None:
         self.logger.info(
