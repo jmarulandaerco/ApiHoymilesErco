@@ -19,6 +19,7 @@ class HoymileReport:
     #     self.key = key
 
     def get_list_plants(self) -> list:
+        self.logger.info("Si funciono, no soy una deshonra")
         all_plants = [] 
         next_page = 1  
 
