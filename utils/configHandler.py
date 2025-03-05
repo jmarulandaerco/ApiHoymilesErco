@@ -25,6 +25,9 @@ class ConfigHandler:
 
     def get_data_microinverter(self):
         return self.config.get("ENDPOINT", "DATA_MICROINVERTER")
+    
+    def get_retries(self):
+        return self.config.get("SETTING","MAX_RETRIES")
 
 
 class ConfigHandlerKey(ConfigHandler):

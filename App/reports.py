@@ -18,6 +18,9 @@ class HoymileReport:
     #     self.config_data = config_data
     #     self.key = key
 
+    def __post_init__(self):
+        self.MAX_RETRIES= int(self.config_data.get_retries())
+        
     def get_list_plants(self) -> list:
         self.logger.info("Si funciono, no soy una deshonra")
         all_plants = [] 
@@ -32,53 +35,60 @@ class HoymileReport:
             "Content-Type": "application/json",
             "Accept": "*/*"
         }
+        
         try:
 
             while next_page is not None:  
                 data_req = {"next": next_page}  
                 print(f"\n Enviando solicitud: {data_req}")
+                for attempt in range(1,  self.MAX_RETRIES + 1):
 
-                response = requests.post(url, headers=headers, json=data_req)
+                    response = requests.post(url, headers=headers, json=data_req)
 
-                if response.status_code != 200:
-                    print(f"Error {response.status_code}: {response.text}")
-                    self.logger.error(f"Error {response.status_code}: {response}")
-                    break  
+                    if response.status_code != 200:
+                        print(f"Error {response.status_code}: {response.text}")
+                        self.logger.error(f"Error {response.status_code}: {response}")
+                        break  
 
-                data = response.json()
-                
-                if data["status"] != "0":
-                    # print("Error en la consulta:", data["message"])
-                    self.logger.error(f"Error in the consult: {data['message']}")
-                    break
-
-                print("Datos recibidos:", data)
-
-                # Obtener lista de estaciones
-                stations = data.get("data", {}).get("stations", [])
-                
-                for entry in stations:
+                    data = response.json()
                     
-                #ids = [station.get("id") for station in data.get("data", {}).get("stations", [])]
-                    all_plants.append({"id_plant": entry.get("id"), "plant_name":entry.get("station_name")})
-                #all_plants.extend(stations)  # Agregar solo si hay estaciones
-                #proy_id.extend(ids)
-                #print("ESTOS SON LOS IDS DE LAS PLANTAS:", proy_id)
+                    if data["status"] != "0":
+                        # print("Error en la consulta:", data["message"])
+                        self.logger.error(f"Error in the consult: {data['message']}")
+                        break
 
-                
-                next_page = data.get("data", {}).get("next", None)  # Si no hay "next", devuelve None
-                
-                print(f"Next page actualizado a: {next_page}")
+                    print("Datos recibidos:", data)
 
-                
-                if not stations or next_page is None:
-                    print("No hay más estaciones o `next` no existe. bye.")
-                    self.logger.info("There are no more stations available. Bye")
+                    # Obtener lista de estaciones
+                    stations = data.get("data", {}).get("stations", [])
+                    
+                    for entry in stations:
+                        
+                    #ids = [station.get("id") for station in data.get("data", {}).get("stations", [])]
+                        all_plants.append({"id_plant": entry.get("id"), "plant_name":entry.get("station_name")})
+                    #all_plants.extend(stations)  # Agregar solo si hay estaciones
+                    #proy_id.extend(ids)
+                    #print("ESTOS SON LOS IDS DE LAS PLANTAS:", proy_id)
+
+                    
+                    next_page = data.get("data", {}).get("next", None)  # Si no hay "next", devuelve None
+                    
+                    print(f"Next page actualizado a: {next_page}")
+
+                    
+                    if not stations or next_page is None:
+                        print("No hay más estaciones o `next` no existe. bye.")
+                        self.logger.info("There are no more stations available. Bye")
+                        break
+                    
+                    time.sleep(6)
                     break
                 
-                time.sleep(6)
-
-            print(f"\n Total de estaciones obtenidas: {len(all_plants)}")
+                if attempt ==  self.MAX_RETRIES:
+                    print("Se alcanzó el número máximo de intentos sin éxito.")
+                    self.logger.error(f"Unable to consult the list of plants, maximum number of attempts made. Max retries ={self.MAX_RETRIES}")
+                    return []
+                print(f"\n Total de estaciones obtenidas: {len(all_plants)}")
             print("Lista filtrada: ", all_plants)
         
         except Exception as ex: 
@@ -114,21 +124,27 @@ class HoymileReport:
                     break
 
                 data_req = {"id": proy_id} 
-                response = requests.post(url, headers=headers, json=data_req)
+                for attempt in range(1,  self.MAX_RETRIES + 1):
+                    response = requests.post(url, headers=headers, json=data_req)
 
-                if response.status_code != 200:
-                        print(f"Error {response.status_code}: {response.text}")
-                        self.logger.error(f"Error {response.status_code}: {response}")
-                        break  
+                    if response.status_code != 200:
+                            print(f"Error {response.status_code}: {response.text}")
+                            self.logger.error(f"Error {response.status_code}: {response}")
+                            break  
 
-                data = response.json()
-                
-                if data["status"] != "0":
-                        # print("Error en la consulta:", data["message"])
-                        self.logger.error(f"Error in the consult: {data['message']}")
-                        break
-                
-                time.sleep(6)
+                    data = response.json()
+                    
+                    if data["status"] != "0":
+                            # print("Error en la consulta:", data["message"])
+                            self.logger.error(f"Error in the consult: {data['message']}")
+                            break
+                    
+                    time.sleep(6)
+                    break
+                if attempt ==  self.MAX_RETRIES:
+                    print("Se alcanzó el número máximo de intentos sin éxito.")
+                    self.logger.error(f"Unable to consult the list of plants, maximum number of attempts made. Max retries ={self.MAX_RETRIES}")
+                    return []
 
                 micro_datas = {item.get("mi_sn") for item in data.get("data", {}).get("micro_datas", [])}
 
