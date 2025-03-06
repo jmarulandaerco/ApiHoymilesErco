@@ -174,9 +174,17 @@ class HoymileReport:
                                 "date": current_date_formatted, 
                                 "sn": microinverters 
                             }
-                response = requests.post(url, headers=headers, json=data_req)
-                print(f"informacion micros: {response.json()}")
-                time.sleep(6)
+                for attempt in range(1, self.MAX_RETRIES + 1):
+ 
+                    response = requests.post(url, headers=headers, json=data_req)
+                    print(f"informacion micros: {response.json()}")
+                    time.sleep(6)
+                    break
+                else:
+                    print("Se alcanzó el número máximo de intentos sin éxito.")
+                    self.logger.error(f"Unable to consult the list of plants, maximum number of attempts made. Max retries ={self.MAX_RETRIES}")
+                    return []
+                    
         
 
     def information_processing(self) -> None:

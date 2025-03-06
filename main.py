@@ -4,8 +4,8 @@ from utils.logger import LoggerHandler
 
 
 if __name__ == "__main__":
-    with open("large_text.txt", "w") as f:
-        f.write("A" * (17 * 1024 * 1024))  # 7 MB de la letra "A"
+    # with open("large_text.txt", "w") as f:
+    #     f.write("A" * (17 * 1024 * 1024))  # 7 MB de la letra "A"
     config_handler = ConfigHandler("config.ini")
     config_key = ConfigHandlerKey("key.ini")
     logger_handler = LoggerHandler()
