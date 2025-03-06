@@ -52,7 +52,7 @@ class HoymileReport:
                     data = response.json()
                     
                     if data["status"] != "0":
-                        self.logger.error(f"Error in the consult: {data['message']} with status {data["status"]}")
+                        self.logger.error(f"Error in the consult: {data['message']} with status {data['status']}")
                         time.sleep(6)  
                         continue 
 
@@ -125,7 +125,7 @@ class HoymileReport:
                     
                     if data["status"] != "0":
                             # print("Error en la consulta:", data["message"])
-                            self.logger.error(f"Error in the consult: {data['message']} with status {data["status"]}")
+                            self.logger.error(f"Error in the consult: {data['message']} with status {data['status']}")
                             time.sleep(6)  
                             continue
                     
