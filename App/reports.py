@@ -70,6 +70,15 @@ class HoymileReport:
                     if not stations or next_page is None:
                         print("No hay más estaciones o `next` no existe. bye.")
                         self.logger.info("There are no more stations available. Bye")
+                        output_file = "plants.txt"
+                        current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        with open(output_file, "a", encoding="utf-8") as plants_file:
+                            plants_file.write(current_date + '\n') 
+                            for plant in all_plants:
+                                plants_file.write(f'{plant["id_plant"]}, {plant["plant_name"]}\n')
+                                print(plant)
+                            plants_file.write('\n')
+
                         return all_plants  
                     
                     time.sleep(6)
