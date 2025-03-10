@@ -84,7 +84,7 @@ class HoymileReport:
             self.logger.error(f"Error while asking for plants {ex}")
             return []
 
-        return all_plants
+       
 
     def get_list_microinverters_per_plant(self) -> list:
         
