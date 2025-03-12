@@ -50,6 +50,9 @@ class ConfigHandler:
 
     def get_name_log(self):
         return self.config.get("SETTING","NAME_LOG")
+    
+    def get_json_time(self):
+        return self.config.get("SETTING", "JSON_TIME")
 
 
 class ConfigHandlerKey(ConfigHandler):

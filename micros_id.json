@@ -1,0 +1,99 @@
+[
+    {
+        "id_plant": 1325870,
+        "plant_name": "Osvaldo Rigamonti",
+        "micros_id": [
+            "106154401265",
+            "106154400672",
+            "106154401377",
+            "106154400929",
+            "106154401367"
+        ]
+    },
+    {
+        "id_plant": 1687430,
+        "plant_name": "Proyecto Jenny De Carrales",
+        "micros_id": [
+            "116190115492",
+            "116190114917",
+            "116190114860"
+        ]
+    },
+    {
+        "id_plant": 1720010,
+        "plant_name": "Proyecto Edwin Cepeda",
+        "micros_id": [
+            "116190115001",
+            "116190115300",
+            "116190115438",
+            "116190115294"
+        ]
+    },
+    {
+        "id_plant": 2123070,
+        "plant_name": "Proyecto José Agrazalez",
+        "micros_id": [
+            "116185103134",
+            "116185102565",
+            "116185102925",
+            "116185103122"
+        ]
+    },
+    {
+        "id_plant": 2174270,
+        "plant_name": "Proyecto María Luisa Garcia",
+        "micros_id": [
+            "116185102554",
+            "116185102608",
+            "116185102853",
+            "116190115947"
+        ]
+    },
+    {
+        "id_plant": 2329820,
+        "plant_name": "Proyecto Carlos Fernández",
+        "micros_id": [
+            "116183923662",
+            "116183922255"
+        ]
+    },
+    {
+        "id_plant": 4122790,
+        "plant_name": "Astrid Arango",
+        "micros_id": [
+            "106273432069",
+            "106273433042",
+            "106273431712",
+            "106273432082"
+        ]
+    },
+    {
+        "id_plant": 4256250,
+        "plant_name": "Cristian Vergara",
+        "micros_id": [
+            "106273432326",
+            "106273433219",
+            "106273432820",
+            "106273433123"
+        ]
+    },
+    {
+        "id_plant": 4925890,
+        "plant_name": "Proyecto Emilio Perez",
+        "micros_id": [
+            "106273432022",
+            "106273433207",
+            "106273433156"
+        ]
+    },
+    {
+        "id_plant": 7010000,
+        "plant_name": "César Castro",
+        "micros_id": [
+            "116183932523",
+            "116183931544",
+            "116192197246",
+            "116192197237"
+        ]
+    }
+]
