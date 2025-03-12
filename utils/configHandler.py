@@ -3,6 +3,7 @@ import configparser
 from dataclasses import dataclass, field
 import urllib.parse
 
+
 @dataclass
 class ConfigHandler:
     """
@@ -24,10 +25,11 @@ class ConfigHandler:
     # def __init__(self, config_file):
     #     self.config = configparser.ConfigParser()
     #     self.config.read(config_file)
-    config_file: str    
-    config: configparser.ConfigParser = field(init=False)     
-    def __post_init__(self): 
-        self.config = configparser.ConfigParser() 
+    config_file: str
+    config: configparser.ConfigParser = field(init=False)
+
+    def __post_init__(self):
+        self.config = configparser.ConfigParser()
         self.config.read(self.config_file)
 
     def get_url(self):
@@ -41,16 +43,16 @@ class ConfigHandler:
 
     def get_data_microinverter(self):
         return self.config.get("ENDPOINT", "DATA_MICROINVERTER")
-    
+
     def get_retries(self):
-        return self.config.get("SETTING","MAX_RETRIES")
-    
+        return self.config.get("SETTING", "MAX_RETRIES")
+
     def get_log_size(self):
-        return self.config.get("SETTING","LOG_SIZE")
+        return self.config.get("SETTING", "LOG_SIZE")
 
     def get_name_log(self):
-        return self.config.get("SETTING","NAME_LOG")
-    
+        return self.config.get("SETTING", "NAME_LOG")
+
     def get_json_time(self):
         return self.config.get("SETTING", "JSON_TIME")
 
@@ -62,6 +64,7 @@ class ConfigHandlerKey(ConfigHandler):
     Methods:
         get_key() -> str: Returns the decrypted key.
     """
+
     def __init__(self, config_file):
         super().__init__(config_file)
 
