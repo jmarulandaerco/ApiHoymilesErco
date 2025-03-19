@@ -56,6 +56,8 @@ class ConfigHandler:
     def get_json_time(self):
         return self.config.get("SETTING", "JSON_TIME")
 
+    def get_total_energy(self):
+        return self.config.get("ENDPOINT", "TOTAL_ENERGY")
 
 class ConfigHandlerKey(ConfigHandler):
     """
