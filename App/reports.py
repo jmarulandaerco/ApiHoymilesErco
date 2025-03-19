@@ -194,7 +194,7 @@ class HoymileReport:
             else:
                 if os.path.exists(name_file):
                     with open("micros_id.json", "r", encoding="utf-8") as file:
-                        print(json.load(file))  # No escapa caracteres Unicode
+                        return json.load(file)  # No escapa caracteres Unicode
                 else:
                     return []
 
@@ -217,7 +217,7 @@ class HoymileReport:
             "Content-Type": "application/json",
             "Accept": "*/*"
         }
- 
+        print("hola")
         all_microinverters = self.get_list_microinverters_per_plant()
         print(all_microinverters)
 
