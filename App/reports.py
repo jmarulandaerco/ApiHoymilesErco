@@ -16,16 +16,11 @@ class HoymileReport:
     key: str
     hour: int
 
-    # def __init__(self, logger, config_data, key): #esto reemplaza al data class
-    #     self.logger = logger
-    #     self.config_data = config_data
-    #     self.key = key
 
     def __post_init__(self):
         self.MAX_RETRIES = int(self.config_data.get_retries())
 
     def get_list_plants(self) -> list:
-        self.logger.info("Si funciono, no soy una deshonra")
         all_plants = []
         next_page = 1
 
@@ -84,8 +79,8 @@ class HoymileReport:
 
                         if not stations or next_page is None:
                             print("No hay más estaciones o `next` no existe. bye.")
-                            self.logger.info(
-                                "There are no more stations available. Bye")
+                            # self.logger.info(
+                            #     "There are no more stations available")
                             output_file = "plants.txt"
                             current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                             with open(output_file, "a", encoding="utf-8") as plants_file:
@@ -150,9 +145,7 @@ class HoymileReport:
                     proy_id = plant.get("id_plant")
                     print("Plants ID", proy_id)
 
-                    # if not plant:
-                    #     self.logger.info("There are no more plants IDs.")
-                    #     break
+                  
 
                     data_req = {"id": proy_id}
                     for attempt in range(1,  self.MAX_RETRIES + 1):
@@ -170,9 +163,8 @@ class HoymileReport:
                         data = response.json()
 
                         if data["status"] != "0":
-                            # print("Error en la consulta:", data["message"])
                             self.logger.error(
-                                f"Error in the consult: {data['message']} with status {data['status']}")
+                                f"Error in the consult: {data['message']} with status {data['status']} in the plant with id: {proy_id}")
                             time.sleep(6)
                             continue
 
@@ -256,7 +248,7 @@ class HoymileReport:
                         if data["status"] != "0":
                             # print("Error en la consulta:", data["message"])
                             self.logger.error(
-                                f"Error in the consult: {data['message']} with status {data['status']}")
+                                f"Error in the consult: {data['message']} with status {data['status']} in the plant with id: {plants.get("id_plant")}")
                             time.sleep(6)
                             continue
  
@@ -266,7 +258,7 @@ class HoymileReport:
                     else:
                         print("Se alcanzó el número máximo de intentos sin éxito.")
                         self.logger.error(
-                            f"Unable to consult the list of plants, maximum number of attempts made. Max retries ={self.MAX_RETRIES}")
+                            f"Unable to consult the list microinverters per plant, maximum number of attempts made. Max retries ={self.MAX_RETRIES}")
                         return []
                 
                 total_energy_per_plant = self.__get_total_energy(plants.get("id_plant"))
@@ -320,7 +312,7 @@ class HoymileReport:
         else:
             print("Se alcanzó el número máximo de intentos sin éxito.")
             self.logger.error(
-                f"Unable to consult the list of plants, maximum number of attempts made. Max retries ={self.MAX_RETRIES}")
+                f"Unable to consult the total_energy, maximum number of attempts made. Max retries ={self.MAX_RETRIES}")
             return None
 
         total_energy_plant = data.get("data")
