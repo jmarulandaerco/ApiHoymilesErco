@@ -58,6 +58,9 @@ class ConfigHandler:
 
     def get_total_energy(self):
         return self.config.get("ENDPOINT", "TOTAL_ENERGY")
+    
+    def get_plant_status(self):
+        return self.config.get("ENDPOINT", "PLANT_STATUS")
 
 class ConfigHandlerKey(ConfigHandler):
     """

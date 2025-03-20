@@ -248,7 +248,7 @@ class HoymileReport:
                         if data["status"] != "0":
                             # print("Error en la consulta:", data["message"])
                             self.logger.error(
-                                f"Error in the consult: {data['message']} with status {data['status']} in the plant with id: {plants.get("id_plant")}")
+                                f"Error in the consult: {data['message']} with status {data['status']} in the plant with id: {plants.get('id_plant')}")
                             time.sleep(6)
                             continue
  
@@ -262,7 +262,9 @@ class HoymileReport:
                         return []
                 
                 total_energy_per_plant = self.__get_total_energy(plants.get("id_plant"))
-                all_data_microinverters.append({"id_plant":plants.get("id_plant"),"name_plant":plants.get("plant_name"), "total_energy": total_energy_per_plant,"data_inverters":data_microinverters,  })
+                plant_status = self.__get_plant_status(plants.get("id_plant"))
+
+                all_data_microinverters.append({"id_plant":plants.get("id_plant"),"name_plant":plants.get("plant_name"), "total_energy": total_energy_per_plant, "plant_status": plant_status,"data_inverters":data_microinverters})
             
             with open('data.json', "w", encoding="utf-8") as file:
                 json.dump(all_data_microinverters, file,
@@ -286,40 +288,101 @@ class HoymileReport:
 
         data_req = {"station_id": id_plant}
 
-        for attempt in range(1,  self.MAX_RETRIES + 1):
-            response = requests.post(
-                url, headers=headers, json=data_req)
+        try:
 
-            if response.status_code != 200:
-                print(
-                    f"Error {response.status_code}: {response.text}")
-                self.logger.error(
-                    f"Error {response.status_code}: {response}")
+            for attempt in range(1,  self.MAX_RETRIES + 1):
+                response = requests.post(
+                    url, headers=headers, json=data_req)
+
+                if response.status_code != 200:
+                    print(
+                        f"Error {response.status_code}: {response.text}")
+                    self.logger.error(
+                        f"Error {response.status_code}: {response}")
+                    time.sleep(6)
+                    continue
+
+                data = response.json()
+
+                if data["status"] != "0":
+                    # print("Error en la consulta:", data["message"])
+                    self.logger.error(
+                        f"Error in the consult: {data['message']} with status {data['status']}")
+                    time.sleep(6)
+                    continue
+
                 time.sleep(6)
-                continue
-
-            data = response.json()
-
-            if data["status"] != "0":
-                # print("Error en la consulta:", data["message"])
+                break
+            else:
+                print("Se alcanzó el número máximo de intentos sin éxito.")
                 self.logger.error(
-                    f"Error in the consult: {data['message']} with status {data['status']}")
-                time.sleep(6)
-                continue
+                    f"Unable to consult the total_energy, maximum number of attempts made. Max retries ={self.MAX_RETRIES}")
+                return None
 
-            time.sleep(6)
-            break
-        else:
-            print("Se alcanzó el número máximo de intentos sin éxito.")
-            self.logger.error(
-                f"Unable to consult the total_energy, maximum number of attempts made. Max retries ={self.MAX_RETRIES}")
+            total_energy_plant = data.get("data")
+
+            print("Energía total de la planta: ", total_energy_plant)
+
+        except Exception as ex:
+            self.logger.error(f"Error while asking for data microinverters {ex}")
             return None
 
-        total_energy_plant = data.get("data")
-
-        print("Energía total de la planta: ", total_energy_plant)
-
         return total_energy_plant
+    
+    def __get_plant_status(self, id_plant:int) -> dict:
+        
+        url_plant_status = self.config_data.get_plant_status()
+        key = self.key
+        url = self.config_data.get_url() + url_plant_status + "key=" + key
+        print(url)
+
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "*/*"
+        }
+
+        data_req = {"id": id_plant}
+
+        try:
+
+            for attempt in range(1,  self.MAX_RETRIES + 1):
+                response = requests.post(
+                    url, headers=headers, json=data_req)
+
+                if response.status_code != 200:
+                    print(
+                        f"Error {response.status_code}: {response.text}")
+                    self.logger.error(
+                        f"Error {response.status_code}: {response}")
+                    time.sleep(6)
+                    continue
+
+                data = response.json()
+
+                if data["status"] != "0":
+                    # print("Error en la consulta:", data["message"])
+                    self.logger.error(
+                        f"Error in the consult: {data['message']} with status {data['status']}")
+                    time.sleep(6)
+                    continue
+
+                time.sleep(6)
+                break
+            else:
+                print("Se alcanzó el número máximo de intentos sin éxito.")
+                self.logger.error(
+                    f"Unable to consult the total_energy, maximum number of attempts made. Max retries ={self.MAX_RETRIES}")
+                return None
+
+            plant_status = data.get("data")
+
+            print("Status de la planta: ", plant_status)
+
+        except Exception as ex:
+            self.logger.error(f"Error while asking for data microinverters {ex}")
+            return None
+
+        return plant_status
 
 
     def information_processing(self) -> None:
