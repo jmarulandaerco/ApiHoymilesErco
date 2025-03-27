@@ -22,9 +22,7 @@ class ConfigHandler:
         get_log_size() -> str: Returns the log file size limit.
         get_name_log() -> str: Returns the log file name.
     """
-    # def __init__(self, config_file):
-    #     self.config = configparser.ConfigParser()
-    #     self.config.read(config_file)
+
     config_file: str
     config: configparser.ConfigParser = field(init=False)
 
@@ -32,35 +30,36 @@ class ConfigHandler:
         self.config = configparser.ConfigParser()
         self.config.read(self.config_file)
 
-    def get_url(self):
+    def get_url(self) -> str:
         return self.config.get("ENDPOINT", "URL")
 
-    def get_plant_list(self):
+    def get_plant_list(self) -> str:
         return self.config.get("ENDPOINT", "PLANT_LIST")
 
-    def get_specified_plant(self):
+    def get_specified_plant(self) -> str:
         return self.config.get("ENDPOINT", "SPECIFIED_PLANT")
 
-    def get_data_microinverter(self):
+    def get_data_microinverter(self) -> str:
         return self.config.get("ENDPOINT", "DATA_MICROINVERTER")
 
-    def get_retries(self):
+    def get_retries(self) -> str:
         return self.config.get("SETTING", "MAX_RETRIES")
 
-    def get_log_size(self):
+    def get_log_size(self) -> str:
         return self.config.get("SETTING", "LOG_SIZE")
 
-    def get_name_log(self):
+    def get_name_log(self) -> str:
         return self.config.get("SETTING", "NAME_LOG")
 
-    def get_json_time(self):
+    def get_json_time(self) -> str:
         return self.config.get("SETTING", "JSON_TIME")
 
-    def get_total_energy(self):
+    def get_total_energy(self) -> str:
         return self.config.get("ENDPOINT", "TOTAL_ENERGY")
-    
-    def get_plant_status(self):
+
+    def get_plant_status(self) -> str:
         return self.config.get("ENDPOINT", "PLANT_STATUS")
+
 
 class ConfigHandlerKey(ConfigHandler):
     """
@@ -73,5 +72,5 @@ class ConfigHandlerKey(ConfigHandler):
     def __init__(self, config_file):
         super().__init__(config_file)
 
-    def get_key(self):
+    def get_key(self) -> str:
         return urllib.parse.unquote(self.config.get("PASSWORD", "KEY"))

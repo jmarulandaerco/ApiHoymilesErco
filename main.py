@@ -5,8 +5,7 @@ from datetime import datetime
 import pytz
 
 if __name__ == "__main__":
-    # with open("large_text.txt", "w") as f:
-    #     f.write("A" * (17 * 1024 * 1024))  # 7 MB de la letra "A"
+
     config_handler = ConfigHandler("config.ini")
     config_key = ConfigHandlerKey("key.ini")
     logger_handler = LoggerHandler()
@@ -19,15 +18,14 @@ if __name__ == "__main__":
 
     print("La hora es:", hour)
 
-    # Se hace el llamado de la clase y se le pasan los atributos
     hoymiles = HoymileReport(
         logger=logger, config_data=config_handler, key=key, hour=int(hour))
     # hoymiles.get_list_plants()
     hoymiles.get_data_microinverters_per_plant()
-    #hoymiles.get_list_microinverters_per_plant()
+    # hoymiles.get_list_microinverters_per_plant()
     # hoymiles.get_list_plants()
     # hoymiles.get_list_microinverters_per_plant()
     # hoymiles.information_processing()
     # hoymiles.get_total_energy(1325870)
-    #hoymiles.get_plant_status(1325870)
+    # hoymiles.get_plant_status(1325870)
     # print(key)
