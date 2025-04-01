@@ -2,7 +2,7 @@
 </h1>
 
 <p align="center">
-<img  align="center" src="./logo.png">
+<img  align="center" src="./img/logo.png">
 </p>
 
 <!-- TABLE OF CONTENTS -->
@@ -17,6 +17,8 @@
                 <li><a href="#utils">Utils</a></li>
             </ul>
         </li>
+        <li><a href="#diagrams"> UML Diagram 
+        </a></li>
         <li><a href="#requirements">Installation requirements </a></li>
         <li><a href="#License">License</a></li>
         <li><a href="#Derechos">Copyrights</a></li>
@@ -82,7 +84,103 @@ It contains reusable classes and methods within the project.
 
 ## 📌 Target  
   
-Ensure the correct integration and transfer of power generation data from Hoymiles to Erco Energy's database, facilitating its monitoring and analysis.  
+Ensure the correct integration and transfer of power generation data from Hoymiles to Erco Energy's database, facilitating its monitoring and analysis. 
+
+
+<p id="diagrams" >
+    
+</p>
+
+## Diagrams UML
+
+Este diagrama UML describe las clases y métodos de la aplicación, organizados en diferentes módulos para gestionar la configuración, el registro de datos y las claves cifradas. A continuación se describe cada una de las clases y sus relaciones.
+
+
+<p align="center">
+<img  align="center" src="./img/report.png">
+</p>
+
+Fetching data from hoymiles API.
+
+### Attributes:
+- **LOG_FILE** (str): Path to the log file.
+- **MAX_LOG_SIZE** (int): Maximum allowed log file size in bytes.
+- **logger** (logging.Logger): Logger instance for saving class logs.
+- **config_data** (ConfigHandler): Config instance for getting query settings.
+- **key** (str): API key for fetching data from Hoymiles API.
+- **hour** (int): Current date for fetching data.
+
+### Methods:
+- **__post_init__()**: Initialize self.MAX_RETRIES.
+- **get_list_plants() -> list**: Gets the list of the available plants.
+- **get_list_microinverters_per_plant() -> list**: Gets the list of the assigned microinverters per plant.
+- **get_data_microinverters_per_plant() -> list**: Gets the data of each microinverter per plant.
+- **__get_total_energy() -> str**: Get the total energy of the plant.
+- **__get_plant_status() -> dict**: Get the operation states of the plant.
+
+
+<p align="center">
+<img  align="center" src="./img/helper.png">
+</p>
+
+Manages log file size and ensures it does not exceed a defined limit.
+
+### Attributes:
+- **LOG_FILE** (str): Path to the log file.
+- **MAX_LOG_SIZE** (int): Maximum allowed log file size in bytes.
+
+### Methods:
+- **check_log_sizes()**: Deletes the log file if it exceeds the maximum size.
+
+
+
+
+
+<p align="center">
+<img  align="center" src="./img/logger.png">
+</p>
+
+
+Manages log file size and ensures it does not exceed a defined limit.
+
+### Attributes:
+- **LOG_FILE** (str): Path to the log file.
+- **MAX_LOG_SIZE** (int): Maximum allowed log file size in bytes.
+
+### Methods:
+- **check_log_sizes()**: Deletes the log file if it exceeds the maximum size.
+
+<p align="center">
+<img  align="center" src="./img/config.png">
+</p>
+
+
+Handles application configuration using configparser.
+
+### Attributes:
+- **config_file** (str): Path to the configuration file.
+- **config** (configparser.ConfigParser): ConfigParser instance.
+
+### Methods:
+- **get_url() -> str**: Returns the API endpoint URL.
+- **get_plant_list() -> str**: Returns the plant list endpoint.
+- **get_specified_plant() -> str**: Returns the specified plant endpoint.
+- **get_data_microinverter() -> str**: Returns the microinverter data endpoint.
+- **get_retries() -> str**: Returns the maximum number of retries.
+- **get_log_size() -> str**: Returns the log file size limit.
+- **get_name_log() -> str**: Returns the log file name.
+
+<p align="center">
+<img  align="center" src="./img/key.png">
+</p>
+
+Extends ConfigHandler to handle encrypted keys.
+
+### Methods:
+- **get_key() -> str**: Returns the decrypted key.
+
+
+
 <p id="requirements" >
     
 </p>
