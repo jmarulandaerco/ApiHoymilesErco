@@ -412,3 +412,8 @@ class HoymileReport:
         self.logger.info(
             f"Error en AnotherClass{self.config_data.get_url()}"
         )
+
+    def get_aux(self):
+        data = self.get_data_microinverters_per_plant()
+
+        print("Prueba de que si entra a  Aux", data)

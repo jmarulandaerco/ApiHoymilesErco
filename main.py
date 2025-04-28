@@ -21,11 +21,12 @@ if __name__ == "__main__":
     hoymiles = HoymileReport(
         logger=logger, config_data=config_handler, key=key, hour=int(hour))
     # hoymiles.get_list_plants()
-    hoymiles.get_data_microinverters_per_plant()
+    #hoymiles.get_data_microinverters_per_plant()
     # hoymiles.get_list_microinverters_per_plant()
     # hoymiles.get_list_plants()
     # hoymiles.get_list_microinverters_per_plant()
     # hoymiles.information_processing()
     # hoymiles.get_total_energy(1325870)
     # hoymiles.get_plant_status(1325870)
+    hoymiles.get_aux()
     # print(key)
