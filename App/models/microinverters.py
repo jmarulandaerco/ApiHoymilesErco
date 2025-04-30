@@ -7,7 +7,7 @@ class Microinverter:
     DATE: str
     fecha: str
     SERIAL: str
-    ID_SERVICE: int
+    ID_SERVICE: int 
     ID_DEVICE: int
     # GENERATION: int
     TEMPERATURE_INVERTER: float

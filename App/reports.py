@@ -291,6 +291,8 @@ class HoymileReport:
                 json.dump(all_data_microinverters, file,
                           indent=4, ensure_ascii=False)
 
+            return all_data_microinverters
+        
         except Exception as ex:
             self.logger.error(
                 f"Error while asking for microinverters data {ex}")
@@ -409,11 +411,54 @@ class HoymileReport:
         return plant_status
 
     def information_processing(self) -> None:
-        self.logger.info(
-            f"Error en AnotherClass{self.config_data.get_url()}"
-        )
+    
+        data_total= self.get_aux()
+        print(data_total)
+       
+        json_string = json.dumps(create_payload(data_total,1), indent=4)  # `indent=4` para hacerlo legible
+       
+        with open('datoslala.json', 'w') as archivo_json:
+        # Usa json.dump() para escribir el diccionario en el archivo
+            archivo_json.write(json_string)
+        print("Diccionario guardado como datos.json")
+
+    def create_payload(self,plant_data: list[dict],id_service: int):
+        
+        data_plant = []
+        payload_plant = []
+
+        for plant in data_plant:
+            generation = plant.get("total_energy")
+            id_plant = plant.get("id_plant")
+            plant_status = plant.get("plant_status")
+
+            alarms = {
+                "OFFLINE": plant_status.get("offline"),
+                "UNSTABLE": plant_status.get("unstable"),
+                "UMATCHED": plant_status.get("umatched"),
+                "MICROINVERT_WARN": plant_status.get("mi_warn"),
+                "GRID_WARN": plant_status.get("g_warn"),
+                "LAST_AT":plant_status.get("last_at"),
+            }
 
     def get_aux(self):
         data = self.get_data_microinverters_per_plant()
+        print(data)
+        for plant in data:
+            plant["data_inverters"] = sorted(plant["data_inverters"], key=lambda x: x["id_micro"], reverse=True)
 
-        print("Prueba de que si entra a  Aux", data)
+            for microinverters in plant["data_inverters"]:
+                generation = microinverters.get("generation",[])
+                
+                if generation:
+                    latest_gen = max(generation, key=lambda gen: datetime.strptime(gen["time"], '%H:%M'))
+                    microinverters["generation"] = [latest_gen]
+                
+                else:
+                    microinverters["generation"] = []
+
+        with open('data2.json', "w", encoding="utf-8") as file:
+                json.dump(data, file, indent=4, ensure_ascii=False)
+ 
+        return data
+
