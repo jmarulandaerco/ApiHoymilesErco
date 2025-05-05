@@ -28,5 +28,6 @@ if __name__ == "__main__":
     # hoymiles.information_processing()
     # hoymiles.get_total_energy(1325870)
     # hoymiles.get_plant_status(1325870)
-    hoymiles.get_aux()
+    #hoymiles.get_aux()
+    hoymiles.information_processing()
     # print(key)

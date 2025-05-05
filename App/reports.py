@@ -3,6 +3,7 @@ import logging
 import requests
 import time
 from datetime import datetime
+from App.models.microinverters import Microinverter
 from utils.configHandler import ConfigHandler
 import pytz
 import os
@@ -415,7 +416,7 @@ class HoymileReport:
         data_total= self.get_aux()
         print(data_total)
        
-        json_string = json.dumps(create_payload(data_total,1), indent=4)  # `indent=4` para hacerlo legible
+        json_string = json.dumps(self.create_payload(data_total,1), indent=4)  # `indent=4` para hacerlo legible
        
         with open('datoslala.json', 'w') as archivo_json:
         # Usa json.dump() para escribir el diccionario en el archivo
@@ -427,19 +428,128 @@ class HoymileReport:
         data_plant = []
         payload_plant = []
 
-        for plant in data_plant:
+        for plant in plant_data:
             generation = plant.get("total_energy")
             id_plant = plant.get("id_plant")
             plant_status = plant.get("plant_status")
 
-            alarms = {
-                "OFFLINE": plant_status.get("offline"),
-                "UNSTABLE": plant_status.get("unstable"),
-                "UMATCHED": plant_status.get("umatched"),
-                "MICROINVERT_WARN": plant_status.get("mi_warn"),
-                "GRID_WARN": plant_status.get("g_warn"),
-                "LAST_AT":plant_status.get("last_at"),
-            }
+            for microinverter in plant.get("data_inverters"):
+                if microinverter.get("generation") and microinverter.get("generation") != []:
+                    last_generation = microinverter.get("generation")[0]
+
+                    date_obj = datetime.now()
+                    today_str = date_obj.strftime("%Y-%m-%d")
+                    date_str = f"{today_str} {last_generation['time']}:00"
+                    date_obj = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+                    date_str_formatted = date_obj.strftime("%Y-%m-%d %H:%M:%S")
+
+                    alarms = {
+                        "OFFLINE": plant_status.get("offline"),
+                        "UNSTABLE": plant_status.get("unstable"),
+                        "UMATCHED": plant_status.get("umatched"),
+                        "MICROINVERT_WARN": plant_status.get("mi_warn"),
+                        "GRID_WARN": plant_status.get("g_warn"),
+                        "LAST_AT": date_str_formatted
+                    }
+
+                    ac_data = last_generation.get("ac")
+                    temp_microinverter = ac_data.get("temp")
+                    grid_freq = ac_data.get("freq")
+                    voltage_1_ac = ac_data.get("ua")
+                    voltage_2_ac = ac_data.get("ub")
+                    voltage_3_ac = ac_data.get("uc")
+
+                    dc_data = last_generation.get("dc")
+
+                    dc_voltage = [0.0]*4
+                    dc_current = [0.0]*4
+
+                    print(dc_voltage)
+                    print(dc_current)
+
+                    for i,x in enumerate(dc_data):
+                        dc_voltage[i] = x.get("u")
+                        dc_current[i] = x.get("i")
+
+
+                else:
+                    date_obj = datetime.now()
+                    date_str_formatted = date_obj.strftime("%Y-%m-%d %H:%M:%S")
+
+                    ac_data = {"ua": 0.0, "ub": 0.0, "uc": 0.0, "temp": 0.0}
+                    voltage_dc = [0.0] * 4
+                    current_dc = [0.0] * 4
+                    temp_microinverter = 0.0
+                    grid_freq = 0.0
+                    voltage_1_ac = 0.0
+                    voltage_2_ac = 0.0
+                    voltage_3_ac = 0.0
+
+                    #current_1_ac = generation/p
+
+                    alarms = {
+                        "OFFLINE": plant_status.get("offline"),
+                        "UNSTABLE": plant_status.get("unstable"),
+                        "UMATCHED": plant_status.get("umatched"),
+                        "MICROINVERT_WARN": plant_status.get("mi_warn"),
+                        "GRID_WARN": plant_status.get("g_warn"),
+                        "LAST_AT": date_str_formatted
+                    }
+        
+                payload = Microinverter(
+                    DATE = date_str_formatted,
+                    SERIAL = microinverter.get("id_micro"),
+                    ID_DEVICE = 1,
+                    TEMPERATURE_INVERTER = temp_microinverter,
+                    VOLTAGE_1_DC = dc_voltage[0],
+                    VOLTAGE_2_DC = dc_voltage[1],
+                    VOLTAGE_3_DC = dc_voltage[2],
+                    VOLTAGE_4_DC = dc_voltage[3],
+                    CURRENT_1_DC = dc_current[0],
+                    CURRENT_2_DC = dc_current[1],
+                    CURRENT_3_DC = dc_current[2],
+                    CURRENT_4_DC = dc_current[3],
+                    VOLTAGE_1_AC = voltage_1_ac,
+                    VOLTAGE_2_AC = voltage_2_ac,
+                    VOLTAGE_3_AC = voltage_3_ac,
+                    CURRENT_1_AC = 0.0,
+                    CURRENT_2_AC = 0.0,
+                    CURRENT_3_AC = 0.0,
+                    IRRADIANCE = 0.0,
+                    TEMPERATURE_PANEL = 0.0,
+                    TEMPERATURE_ENVIRONMENT = 0.0,
+                    TEMPERATURE_PCB = 0.0,
+                    TYPE_INVERTER = 9, #PREGUNTAR CUAL ES
+                    POWER_FACTOR = 0.0,
+                    TYPE_DEVICE = 0.0,
+                    POWER_SNAPSHOT = 0.0,
+                    GRID_FREQUENCY = grid_freq,
+                    HEATSINK_TEMPERATURE = 0.0,
+                    APPARENT_POWER = 0.0,
+                    REACTIVE_POWER = 0.0,
+                    WIND_SPEED = 0.0,
+                    WIND_DIRECTION = 0.0,
+                    HUMIDITY = 0.0,
+                    F1 = 0.0,
+                    F2 = 0.0,
+                    F3 = 0.0,
+                    F4 = 0.0,
+                )
+            
+                data_plant.append(payload.__dict__)
+
+            payload_plant.append({
+                "GENERATION": generation,
+                "ID_PLANT" : id_plant,
+                "DATE_GENERATION" : date_str_formatted,
+                "STATUS_PLANT": plant_status,
+                "INFORMATION_PLANTS": data_plant
+            })
+
+            data_plant = []
+
+
+        return payload_plant
 
     def get_aux(self):
         data = self.get_data_microinverters_per_plant()
