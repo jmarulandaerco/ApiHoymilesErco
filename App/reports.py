@@ -542,7 +542,7 @@ class HoymileReport:
                 "GENERATION": generation,
                 "ID_PLANT" : id_plant,
                 "DATE_GENERATION" : date_str_formatted,
-                "STATUS_PLANT": plant_status,
+                "STATUS_PLANT": alarms,
                 "INFORMATION_PLANTS": data_plant
             })
 
