@@ -59,6 +59,11 @@ class ConfigHandler:
 
     def get_plant_status(self) -> str:
         return self.config.get("ENDPOINT", "PLANT_STATUS")
+    
+    def get_url_token(self) -> str:
+        return self.config.get("ENDPOINT", "TOKEN_URL")
+    
+
 
 
 class ConfigHandlerKey(ConfigHandler):
@@ -74,3 +79,6 @@ class ConfigHandlerKey(ConfigHandler):
 
     def get_key(self) -> str:
         return urllib.parse.unquote(self.config.get("PASSWORD", "KEY"))
+    
+    def get_credential_token(self) -> str:
+        return self.config.get("PASSWORD", "CREDENTIALS")

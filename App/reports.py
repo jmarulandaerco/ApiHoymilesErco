@@ -461,8 +461,8 @@ class HoymileReport:
 
                     dc_data = last_generation.get("dc")
 
-                    dc_voltage = [0.0]*4
-                    dc_current = [0.0]*4
+                    dc_voltage = [0.0]*8
+                    dc_current = [0.0]*8
 
                     print(dc_voltage)
                     print(dc_current)
@@ -477,8 +477,8 @@ class HoymileReport:
                     date_str_formatted = date_obj.strftime("%Y-%m-%d %H:%M:%S")
 
                     ac_data = {"ua": 0.0, "ub": 0.0, "uc": 0.0, "temp": 0.0}
-                    voltage_dc = [0.0] * 4
-                    current_dc = [0.0] * 4
+                    voltage_dc = [0.0] * 8
+                    current_dc = [0.0] * 8
                     temp_microinverter = 0.0
                     grid_freq = 0.0
                     voltage_1_ac = 0.0
@@ -498,17 +498,24 @@ class HoymileReport:
         
                 payload = Microinverter(
                     DATE = date_str_formatted,
-                    SERIAL = microinverter.get("id_micro"),
-                    ID_DEVICE = 1,
+                    ID_DEVICE = microinverter.get("id_micro"),
                     TEMPERATURE_INVERTER = temp_microinverter,
                     VOLTAGE_1_DC = dc_voltage[0],
                     VOLTAGE_2_DC = dc_voltage[1],
                     VOLTAGE_3_DC = dc_voltage[2],
                     VOLTAGE_4_DC = dc_voltage[3],
+                    VOLTAGE_5_DC = dc_voltage[4],
+                    VOLTAGE_6_DC = dc_voltage[5],
+                    VOLTAGE_7_DC = dc_voltage[6],
+                    VOLTAGE_8_DC = dc_voltage[7],
                     CURRENT_1_DC = dc_current[0],
                     CURRENT_2_DC = dc_current[1],
                     CURRENT_3_DC = dc_current[2],
                     CURRENT_4_DC = dc_current[3],
+                    CURRENT_5_DC = dc_current[4],
+                    CURRENT_6_DC = dc_current[5],
+                    CURRENT_7_DC = dc_current[6],
+                    CURRENT_8_DC = dc_current[7],
                     VOLTAGE_1_AC = voltage_1_ac,
                     VOLTAGE_2_AC = voltage_2_ac,
                     VOLTAGE_3_AC = voltage_3_ac,
@@ -542,8 +549,8 @@ class HoymileReport:
                 "GENERATION": generation,
                 "ID_PLANT" : id_plant,
                 "DATE_GENERATION" : date_str_formatted,
-                "STATUS_PLANT": alarms,
-                "INFORMATION_PLANTS": data_plant
+                "STATE_OPERATION": alarms,
+                "INFORMATION_MICRO_INVERTERS": data_plant
             })
 
             data_plant = []
