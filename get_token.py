@@ -12,4 +12,3 @@ logger = logger_handler.get_logger()
 
 auth_service = AuthService(logger=logger, url=url_token, credential= credential_token)
 token = auth_service.get_token()
-print(token)

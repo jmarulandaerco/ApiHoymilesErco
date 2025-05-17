@@ -53,9 +53,8 @@ class AuthService:
 
     def get_token(self, autherization:bool=True) -> str:
         """Obtiene el token, primero verificando si existe uno válido en el archivo."""
-        self.logger.info("REACIONAAAA")
         if self.load_token_from_file() and self.is_token_valid() and autherization:
-            self.logger.info("Token exitente y validado")
+            self.logger.info("Existing and validated token")
             return self.token  
 
         self.logger.info("Token is nor valid. Getting the token...")

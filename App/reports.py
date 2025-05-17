@@ -9,6 +9,8 @@ import pytz
 import os
 import json
 
+from utils.helper import HelperReport
+
 @dataclass
 class HoymileReport:
 
@@ -65,15 +67,13 @@ class HoymileReport:
 
                 while next_page is not None:
                     data_req = {"next": next_page}
-                    print(f"\n Enviando solicitud: {data_req}")
 
                     for attempt in range(1, self.MAX_RETRIES + 1):
                         response = requests.post(
                             url, headers=headers, json=data_req)
 
                         if response.status_code != 200:
-                            print(
-                                f"Error {response.status_code}: {response.text}")
+                           
                             self.logger.error(
                                 f"Error {response.status_code}: {response}")
                             time.sleep(6)
@@ -87,7 +87,6 @@ class HoymileReport:
                             time.sleep(6)
                             continue
 
-                        print("Datos recibidos:", data)
 
                         stations = data.get("data", {}).get("stations", [])
 
@@ -96,12 +95,9 @@ class HoymileReport:
                                 "id"), "plant_name": entry.get("station_name")})
 
                         next_page = data.get("data", {}).get("next", None)
-                        print(f"Next page actualizado a: {next_page}")
 
                         if not stations or next_page is None:
-                            print("No hay más estaciones o `next` no existe.")
-                            # self.logger.info(
-                            #     "There are no more stations available")
+                          
                             output_file = "plants.txt"
                             current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                             with open(output_file, "a", encoding="utf-8") as plants_file:
@@ -109,7 +105,6 @@ class HoymileReport:
                                 for plant in all_plants:
                                     plants_file.write(
                                         f'{plant["id_plant"]}, {plant["plant_name"]}\n')
-                                    print(plant)
                                 plants_file.write('\n')
 
                             with open(name_file, "w", encoding="utf-8") as file:
@@ -122,7 +117,6 @@ class HoymileReport:
                         break
 
                     else:
-                        print("Se alcanzó el número máximo de intentos sin éxito.")
                         self.logger.error(
                             f"Unable to consult the list of plants, maximum number of attempts made. Max retries = {self.MAX_RETRIES}")
                         return []
@@ -144,7 +138,6 @@ class HoymileReport:
         micros_per_plant = self.config_data.get_specified_plant()
         key = self.key
         url = self.config_data.get_url() + micros_per_plant + "key=" + key
-        print(url)
 
         headers = {
             "Content-Type": "application/json",
@@ -152,7 +145,6 @@ class HoymileReport:
         }
 
         all_plants = self.get_list_plants()
-        print(all_plants)
         try:
 
             name_file = "micros_id.json"
@@ -164,7 +156,6 @@ class HoymileReport:
 
                 for plant in all_plants:
                     proy_id = plant.get("id_plant")
-                    print("Plants ID", proy_id)
 
                     data_req = {"id": proy_id}
                     for attempt in range(1,  self.MAX_RETRIES + 1):
@@ -172,8 +163,7 @@ class HoymileReport:
                             url, headers=headers, json=data_req)
 
                         if response.status_code != 200:
-                            print(
-                                f"Error {response.status_code}: {response.text}")
+                            
                             self.logger.error(
                                 f"Error {response.status_code}: {response}")
                             time.sleep(6)
@@ -190,7 +180,6 @@ class HoymileReport:
                         time.sleep(6)
                         break
                     else:
-                        print("Se alcanzó el número máximo de intentos sin éxito.")
                         self.logger.error(
                             f"Unable to consult the list of plants, maximum number of attempts made. Max retries ={self.MAX_RETRIES}")
                         return []
@@ -198,7 +187,6 @@ class HoymileReport:
                     micro_datas = list({item.get("mi_sn") for item in data.get(
                         "data", {}).get("micro_datas", [])})
 
-                    print("Lista de microinversores: ", micro_datas)
 
                     all_microinverters.append({"id_plant": proy_id, "plant_name": plant.get(
                         "plant_name"), "micros_id": micro_datas})
@@ -207,7 +195,6 @@ class HoymileReport:
                     json.dump(all_microinverters, file,
                               indent=4, ensure_ascii=False)
 
-                print("SERIALES DE LOS MICROS: ", all_microinverters)
                 return all_microinverters
 
             else:
@@ -229,22 +216,18 @@ class HoymileReport:
         micros_per_plant = self.config_data.get_data_microinverter()
         key = self.key
         url = self.config_data.get_url() + micros_per_plant + "key=" + key
-        print(url)
-        print("la fecha actual es:", current_date_formatted)
+       
 
         headers = {
             "Content-Type": "application/json",
             "Accept": "*/*"
         }
-        print("hola")
         all_microinverters = self.get_list_microinverters_per_plant()
-        print(all_microinverters)
 
         try:
             for plants in all_microinverters:
                 data_microinverters = []
                 for microinverters in plants.get("micros_id"):
-                    print("Microinversores obtenidos", microinverters)
                     data_req = {
                         "station_id": plants.get("id_plant"),
                         "date": current_date_formatted,
@@ -255,8 +238,7 @@ class HoymileReport:
                         response = requests.post(
                             url, headers=headers, json=data_req)
                         if response.status_code != 200:
-                            # print(
-                            #     f"Error {response.status_code}: {response.text}")
+                           
                             self.logger.error(
                                 f"Error {response.status_code}: {response}")
                             time.sleep(6)
@@ -265,7 +247,6 @@ class HoymileReport:
                         data = response.json()
 
                         if data["status"] != "0":
-                            # print("Error en la consulta:", data["message"])
                             self.logger.error(
                                 f"Error in the consult: {data['message']} with status {data['status']} in the plant with id: {plants.get('id_plant')}")
                             time.sleep(6)
@@ -276,7 +257,6 @@ class HoymileReport:
                             {"id_micro": microinverters, "generation": data.get("data")})
                         break
                     else:
-                        print("Se alcanzó el número máximo de intentos sin éxito.")
                         self.logger.error(
                             f"Unable to consult the list microinverters per plant, maximum number of attempts made. Max retries ={self.MAX_RETRIES}")
                         return []
@@ -288,9 +268,7 @@ class HoymileReport:
                 all_data_microinverters.append({"id_plant": plants.get("id_plant"), "name_plant": plants.get(
                     "plant_name"), "total_energy": total_energy_per_plant, "plant_status": plant_status, "data_inverters": data_microinverters})
 
-            with open('data.json', "w", encoding="utf-8") as file:
-                json.dump(all_data_microinverters, file,
-                          indent=4, ensure_ascii=False)
+           
 
             return all_data_microinverters
         
@@ -304,7 +282,6 @@ class HoymileReport:
         url_total_energy_plant = self.config_data.get_total_energy()
         key = self.key
         url = self.config_data.get_url() + url_total_energy_plant + "key=" + key
-        print(url)
 
         headers = {
             "Content-Type": "application/json",
@@ -320,8 +297,7 @@ class HoymileReport:
                     url, headers=headers, json=data_req)
 
                 if response.status_code != 200:
-                    print(
-                        f"Error {response.status_code}: {response.text}")
+                    
                     self.logger.error(
                         f"Error {response.status_code}: {response}")
                     time.sleep(6)
@@ -330,7 +306,6 @@ class HoymileReport:
                 data = response.json()
 
                 if data["status"] != "0":
-                    # print("Error en la consulta:", data["message"])
                     self.logger.error(
                         f"Error in the consult: {data['message']} with status {data['status']}")
                     time.sleep(6)
@@ -339,14 +314,12 @@ class HoymileReport:
                 time.sleep(6)
                 break
             else:
-                print("Se alcanzó el número máximo de intentos sin éxito.")
                 self.logger.error(
                     f"Unable to consult the total energy, maximum number of attempts made. Max retries ={self.MAX_RETRIES}")
                 return None
 
             total_energy_plant = data.get("data")
 
-            print("Energía total de la planta: ", total_energy_plant)
 
         except Exception as ex:
             self.logger.error(
@@ -360,7 +333,6 @@ class HoymileReport:
         url_plant_status = self.config_data.get_plant_status()
         key = self.key
         url = self.config_data.get_url() + url_plant_status + "key=" + key
-        print(url)
 
         headers = {
             "Content-Type": "application/json",
@@ -376,8 +348,6 @@ class HoymileReport:
                     url, headers=headers, json=data_req)
 
                 if response.status_code != 200:
-                    print(
-                        f"Error {response.status_code}: {response.text}")
                     self.logger.error(
                         f"Error {response.status_code}: {response}")
                     time.sleep(6)
@@ -386,7 +356,6 @@ class HoymileReport:
                 data = response.json()
 
                 if data["status"] != "0":
-                    # print("Error en la consulta:", data["message"])
                     self.logger.error(
                         f"Error in the consult: {data['message']} with status {data['status']}")
                     time.sleep(6)
@@ -395,14 +364,12 @@ class HoymileReport:
                 time.sleep(6)
                 break
             else:
-                print("Se alcanzó el número máximo de intentos sin éxito.")
                 self.logger.error(
                     f"Unable to consult the operation state of the plant, maximum number of attempts made. Max retries ={self.MAX_RETRIES}")
                 return None
 
             plant_status = data.get("data")
 
-            print("Status de la planta: ", plant_status)
 
         except Exception as ex:
             self.logger.error(
@@ -411,19 +378,17 @@ class HoymileReport:
 
         return plant_status
 
-    def information_processing(self) -> None:
+
+    def information_processing(self,data) -> None:
     
-        data_total= self.get_aux()
-        print(data_total)
        
-        json_string = json.dumps(self.create_payload(data_total,1), indent=4)  # `indent=4` para hacerlo legible
+        json_string = json.dumps(self.create_payload(data), indent=4)  # `indent=4` para hacerlo legible
        
         with open('datoslala.json', 'w') as archivo_json:
-        # Usa json.dump() para escribir el diccionario en el archivo
+        
             archivo_json.write(json_string)
-        print("Diccionario guardado como datos.json")
 
-    def create_payload(self,plant_data: list[dict],id_service: int):
+    def create_payload(self,plant_data: list[dict]):
         
         data_plant = []
         payload_plant = []
@@ -436,13 +401,12 @@ class HoymileReport:
             for microinverter in plant.get("data_inverters"):
                 if microinverter.get("generation") and microinverter.get("generation") != []:
                     last_generation = microinverter.get("generation")[0]
-
                     date_obj = datetime.now()
-                    today_str = date_obj.strftime("%Y-%m-%d")
-                    date_str = f"{today_str} {last_generation['time']}:00"
-                    date_obj = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
-                    date_str_formatted = date_obj.strftime("%Y-%m-%d %H:%M:%S")
-
+                        
+                        
+                    dateHelper =HelperReport()
+                    rounded_time=dateHelper.round_time_down(date_obj,self.config_data.get_interval_time())
+                    date_str_formatted = rounded_time.strftime("%Y-%m-%d %H:%M:%S")
                     alarms = {
                         "OFFLINE": plant_status.get("offline"),
                         "UNSTABLE": plant_status.get("unstable"),
@@ -464,8 +428,7 @@ class HoymileReport:
                     dc_voltage = [0.0]*8
                     dc_current = [0.0]*8
 
-                    print(dc_voltage)
-                    print(dc_current)
+                   
 
                     for i,x in enumerate(dc_data):
                         dc_voltage[i] = x.get("u")
@@ -474,11 +437,15 @@ class HoymileReport:
 
                 else:
                     date_obj = datetime.now()
-                    date_str_formatted = date_obj.strftime("%Y-%m-%d %H:%M:%S")
+                        
+                        
+                    dateHelper =HelperReport()
+                    rounded_time=dateHelper.round_time_down(date_obj,self.config_data.get_interval_time())
+                    date_str_formatted = rounded_time.strftime("%Y-%m-%d %H:%M:%S")
 
                     ac_data = {"ua": 0.0, "ub": 0.0, "uc": 0.0, "temp": 0.0}
-                    voltage_dc = [0.0] * 8
-                    current_dc = [0.0] * 8
+                    dc_voltage = [0.0] * 8
+                    dc_current = [0.0] * 8
                     temp_microinverter = 0.0
                     grid_freq = 0.0
                     voltage_1_ac = 0.0
@@ -558,9 +525,8 @@ class HoymileReport:
 
         return payload_plant
 
-    def get_aux(self):
+    def order_information_plants(self):
         data = self.get_data_microinverters_per_plant()
-        print(data)
         for plant in data:
             plant["data_inverters"] = sorted(plant["data_inverters"], key=lambda x: x["id_micro"], reverse=True)
 
@@ -578,4 +544,3 @@ class HoymileReport:
                 json.dump(data, file, indent=4, ensure_ascii=False)
  
         return data
-

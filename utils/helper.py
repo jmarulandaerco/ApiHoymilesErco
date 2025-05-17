@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 import os
-
+from datetime import datetime
 from utils.configHandler import ConfigHandler
 
 
@@ -27,3 +27,8 @@ class HelperReport:
     def check_log_sizes(self):
         if os.path.exists(self.LOG_FILE) and os.path.getsize(self.LOG_FILE) > self.MAX_LOG_SIZE:
             os.remove(self.LOG_FILE)
+
+    def round_time_down(self,dt:datetime, interval_minutes:int):
+        minutes = dt.minute
+        rounded_minutes = (minutes // interval_minutes) * interval_minutes
+        return dt.replace(minute=rounded_minutes, second=0, microsecond=0)

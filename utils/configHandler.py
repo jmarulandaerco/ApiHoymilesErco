@@ -21,6 +21,12 @@ class ConfigHandler:
         get_retries() -> str: Returns the maximum number of retries.
         get_log_size() -> str: Returns the log file size limit.
         get_name_log() -> str: Returns the log file name.
+        get_json_time() -> str: Returns the json time.
+        get_total_energy() -> str: Returns the total energy. 
+        get_plant_status() -> str: Return the status plant.
+        def get_interval_time() -> str: Return the time interval.
+
+        
     """
 
     config_file: str
@@ -41,6 +47,18 @@ class ConfigHandler:
 
     def get_data_microinverter(self) -> str:
         return self.config.get("ENDPOINT", "DATA_MICROINVERTER")
+    
+    def get_total_energy(self) -> str:
+        return self.config.get("ENDPOINT", "TOTAL_ENERGY")
+
+    def get_plant_status(self) -> str:
+        return self.config.get("ENDPOINT", "PLANT_STATUS")
+    
+    def get_url_token(self) -> str:
+        return self.config.get("ENDPOINT", "TOKEN_URL")
+    
+    def get_url_enrg(self) -> str:
+        return self.config.get("ENDPOINT", "ENRG_URL")
 
     def get_retries(self) -> str:
         return self.config.get("SETTING", "MAX_RETRIES")
@@ -53,18 +71,14 @@ class ConfigHandler:
 
     def get_json_time(self) -> str:
         return self.config.get("SETTING", "JSON_TIME")
-
-    def get_total_energy(self) -> str:
-        return self.config.get("ENDPOINT", "TOTAL_ENERGY")
-
-    def get_plant_status(self) -> str:
-        return self.config.get("ENDPOINT", "PLANT_STATUS")
     
-    def get_url_token(self) -> str:
-        return self.config.get("ENDPOINT", "TOKEN_URL")
+    def get_interval_time(self)->int:
+        return int(self.config.get("SETTING","INTERVAL_TIME"))
     
 
 
+    
+    
 
 class ConfigHandlerKey(ConfigHandler):
     """
@@ -80,5 +94,8 @@ class ConfigHandlerKey(ConfigHandler):
     def get_key(self) -> str:
         return urllib.parse.unquote(self.config.get("PASSWORD", "KEY"))
     
-    def get_credential_token(self) -> str:
-        return self.config.get("PASSWORD", "CREDENTIALS")
+    def get_token_save(self) -> str:
+        return self.config.get("PASSWORD","TOKEN")
+    
+    def get_credentials(self) -> str:
+        return self.config.get("PASSWORD","CREDENTIALS")
