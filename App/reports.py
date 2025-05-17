@@ -15,25 +15,45 @@ from utils.helper import HelperReport
 class HoymileReport:
 
     """
-    Fetching data from hoymiles API.
+    HoymileReport class provides functionality to interact with the Hoymiles API
+    to fetch, cache, and process information about plants and their microinverters.
+
+    This class is designed to:
+    - Fetch and cache a list of plants.
+    - Fetch and cache microinverters associated with each plant.
+    - Fetch daily generation data for each microinverter.
+    - Retrieve additional information such as total energy generated and plant status.
 
     Attributes:
-        LOG_FILE (str): Path to the log file.
-        MAX_LOG_SIZE (int): Maximum allowed log file size in bytes.
-        logger (logging.Logger): Logger instance for saving class logs.
-        config_data (ConfigHandler): Config instance for getting query settings.
-        key (str): API key for fetching data from Hoymiles API.
-        hour (int): Current date for fetching data.
+        logger (logging.Logger): Logger instance for capturing logs and errors.
+        config_data (ConfigHandler): Configuration object with API URLs, retry policies, etc.
+        key (str): API key for authenticating requests.
+        hour (int): Current hour used to determine cache refresh logic.
+        MAX_RETRIES (int): Max attempts to retry API calls on failure (set during initialization).
 
     Methods:
-         __post_init__(): Initialize self.MAX_RETRIES.
-        get_list_plants() -> list: Gets the list of the avalable plants.
-        get_list_microinverters_per_plant() -> list: Gets the list of the asigned microinverters per plant.
-        get_data_microinverters_per_plant() -> list: Gets the data of each microinverter per plant.
-        __get_total_energy() -> str: Get the total energy of the plant.
-        __get_plant_status() -> dict: Get the operation states of the plant.
+        __post_init__():
+            Loads MAX_RETRIES from configuration.
 
+        get_list_plants() -> list:
+            Retrieves a list of solar plants from the Hoymiles API.
+            Caches results in a local JSON file and refreshes data based on the current hour.
+
+        get_list_microinverters_per_plant() -> list:
+            For each plant, retrieves the list of microinverter serial numbers.
+            Caches results and refreshes them based on the configured hour.
+
+        get_data_microinverters_per_plant() -> list:
+            For each plant and its microinverters, retrieves generation data,
+            total energy, and plant status.
+
+        __get_total_energy(id_plant: int) -> str:
+            Retrieves the total energy generated for a given plant ID.
+
+        __get_plant_status(id_plant: int) -> dict:
+            Retrieves the status of a given plant (e.g., online/offline).
     """
+
 
     logger: logging.Logger
     config_data: ConfigHandler
@@ -377,7 +397,6 @@ class HoymileReport:
             return None
 
         return plant_status
-
 
     def information_processing(self,data) -> None:
     

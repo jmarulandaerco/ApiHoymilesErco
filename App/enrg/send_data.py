@@ -5,6 +5,27 @@ from typing import List, Dict
 
 @dataclass
 class PostRequester:
+    """
+    PostRequester is responsible for sending multiple POST requests to a specified API endpoint
+    with a given authorization token and list of payloads. It logs the success or failure of each request,
+    and processes the response to provide feedback on plant and device registration status.
+
+    Attributes:
+        url (str): The API endpoint where POST requests will be sent.
+        token (str): The bearer token used for authorization.
+        payloads (List[Dict]): A list of dictionaries to be sent as JSON in each POST request.
+        logger (logging.Logger): Logger instance used for logging results and errors.
+
+    Methods:
+        send_post_requests():
+            Sends each payload in the payload list to the API using a POST request.
+            Logs errors for failed requests and passes successful responses to be handled.
+
+        _handle_response(result: Dict, payload: Dict):
+            Parses the API response to check whether plant and device information was saved correctly.
+            Logs messages based on the presence or absence of certain keys and values in the response.
+    """
+
     url: str
     token: str
     payloads: List[Dict]

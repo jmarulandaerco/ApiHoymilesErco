@@ -11,22 +11,47 @@ class ConfigHandler:
 
     Attributes:
         config_file (str): Path to the configuration file.
-        config (configparser.ConfigParser): ConfigParser instance.
+        config (configparser.ConfigParser): Parser instance for reading configuration.
 
     Methods:
-        get_url() -> str: Returns the API endpoint URL.
-        get_plant_list() -> str: Returns the plant list endpoint.
-        get_specified_plant() -> str: Returns the specified plant endpoint.
-        get_data_microinverter() -> str: Returns the microinverter data endpoint.
-        get_retries() -> str: Returns the maximum number of retries.
-        get_log_size() -> str: Returns the log file size limit.
-        get_name_log() -> str: Returns the log file name.
-        get_json_time() -> str: Returns the json time.
-        get_total_energy() -> str: Returns the total energy. 
-        get_plant_status() -> str: Return the status plant.
-        def get_interval_time() -> str: Return the time interval.
-
+        get_url() -> str:
+            Returns the base API endpoint URL from the config.
         
+        get_plant_list() -> str:
+            Returns the endpoint for retrieving the plant list.
+        
+        get_specified_plant() -> str:
+            Returns the endpoint for retrieving a specified plant's data.
+        
+        get_data_microinverter() -> str:
+            Returns the endpoint for retrieving microinverter data.
+        
+        get_total_energy() -> str:
+            Returns the endpoint for retrieving total energy data.
+
+        get_plant_status() -> str:
+            Returns the endpoint for retrieving plant status.
+
+        get_url_token() -> str:
+            Returns the endpoint for obtaining a token.
+        
+        get_url_enrg() -> str:
+            Returns the endpoint for the energy report.
+        
+        get_retries() -> str:
+            Returns the maximum number of retries from settings.
+        
+        get_log_size() -> str:
+            Returns the log file size limit from settings.
+        
+        get_name_log() -> str:
+            Returns the log file name from settings.
+        
+        get_json_time() -> str:
+            Returns the JSON timestamp format from settings.
+        
+        get_interval_time() -> int:
+            Returns the time interval (in seconds or minutes) from settings.
     """
 
     config_file: str
@@ -82,10 +107,17 @@ class ConfigHandler:
 
 class ConfigHandlerKey(ConfigHandler):
     """
-    Extends ConfigHandler to handle encrypted keys.
+    Extends ConfigHandler to handle encrypted keys and password-related settings.
 
     Methods:
-        get_key() -> str: Returns the decrypted key.
+        get_key() -> str:
+            Returns the decrypted key by URL-decoding the stored key.
+
+        get_token_save() -> str:
+            Returns the saved token from the configuration.
+
+        get_credentials() -> str:
+            Returns the stored credentials from the configuration.
     """
 
     def __init__(self, config_file):

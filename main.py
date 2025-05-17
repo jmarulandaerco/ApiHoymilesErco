@@ -3,10 +3,11 @@ from App.enrg.send_data import PostRequester
 from App.reports import HoymileReport
 from utils.configHandler import ConfigHandler, ConfigHandlerKey
 from utils.logger import LoggerHandler
-from datetime import datetime
+from datetime import datetime, time
 import pytz
 
 if __name__ == "__main__":
+    # start = time.time()
 
     config_handler = ConfigHandler("config.ini")
     config_key = ConfigHandlerKey("key.ini")
@@ -26,4 +27,9 @@ if __name__ == "__main__":
     token=get_token.get_token()
     send_data = PostRequester(url=config_handler.get_url_enrg(),token=token,logger= logger,payloads=payloads)
     send_data.send_post_requests()
+    # end = time.time()
+    # duration = end - start
+    # print(f"Tiempo de ejecución: {duration:.2f} segundos")
+
+
     

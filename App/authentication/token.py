@@ -8,6 +8,33 @@ import os
 
 @dataclass
 class AuthService:
+    """
+    AuthService is responsible for handling authentication with a remote API using a token-based system.
+    It supports retrieving a token from the API, storing it locally, and reusing it until expiration.
+
+    Attributes:
+        logger (logging.Logger): Logger instance used for logging messages and errors.
+        url (str): API endpoint to request the token.
+        credential (str): Credential required by the API to obtain a token.
+        token (Optional[str]): Current token if already obtained.
+        expiration (Optional[datetime]): Expiration datetime of the current token.
+        key_file (str): Path to the file where the token and its expiration are stored.
+
+    Methods:
+        load_token_from_file() -> bool:
+            Loads the token and its expiration from the key file if it exists and is valid.
+
+        save_token_to_file() -> None:
+            Saves the current token and its expiration to the key file.
+
+        get_token(autherization: bool = True) -> str:
+            Returns a valid token. If a valid token exists in the file, it is used.
+            Otherwise, a new token is requested from the API.
+
+        is_token_valid() -> bool:
+            Checks whether the current token is valid and not expired (must be valid for at least 60 more days).
+    """
+
     logger: logging.Logger = field(init=True)
     url: str
     credential: str
@@ -17,7 +44,6 @@ class AuthService:
     
 
     def load_token_from_file(self) -> bool:
-        """Carga el token y la expiración desde el archivo key.init si existe."""
         config = configparser.ConfigParser()
         
         if os.path.exists(self.key_file):
@@ -35,7 +61,6 @@ class AuthService:
         return False
 
     def save_token_to_file(self) -> None:
-        """Guarda el token y la fecha de expiración en el archivo key.init."""
         if self.token and self.expiration:
             config = configparser.ConfigParser()
             try:
@@ -52,7 +77,6 @@ class AuthService:
                 self.logger.error(f"Error at saving the file {self.key_file}: {e}")
 
     def get_token(self, autherization:bool=True) -> str:
-        """Obtiene el token, primero verificando si existe uno válido en el archivo."""
         if self.load_token_from_file() and self.is_token_valid() and autherization:
             self.logger.info("Existing and validated token")
             return self.token  
@@ -86,7 +110,6 @@ class AuthService:
         return ""  
 
     def is_token_valid(self) -> bool:
-        """Verifica si el token es válido y no ha expirado."""
         if self.token and self.expiration:
             now = datetime.now(timezone.utc)
             if self.expiration <= now or self.expiration - now < timedelta(days=60):

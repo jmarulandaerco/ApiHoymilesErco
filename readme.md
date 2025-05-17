@@ -60,32 +60,13 @@ This project has a main script in charge of the application execution. It define
 </p>
 
 ### 📂 `App`  
-It contains the main class in charge of querying and processing data.  
+El sistema incluye una clase principal que se encarga de la consulta y procesamiento de datos, una clase para la gestión de tokens y una clase adicional para el envío de la información al servidor de ENRG.
 
-#### **Clase `HoymileReport`**  
-- `get_list_plants()`: Returns the plants associated with the Hoymiles account.    
-- `get_list_microinverters_per_plant()`: Consult the list of plants and return those with their respective microinverters.  
-- `get_data_microinverters_per_plant()`:  
-  - Obtains power generation information for each microinverter.  
-  - Stores data organized by plant.   
-  - Returns a list with the collected information.  
-- `information_processing()`: Processes the collected information and structures it in the appropriate format for submission to Erco Energy's database.
-
-<p id="utils">
-</p>
 
 ### 📂 `utils`  
 It contains reusable classes and methods within the project.  
 
-- **`LoggerHandler`**: Logs errors, general information and debugging messages.
-- **`ConfigHandler`**: Gets data from the file `config.ini`, including the URLs needed to query the Hoymiles API.  
-- **`ConfigHandlerKey`**: Manages the authentication key required for querying the Hoymiles API. **For security reasons, this key is not available directly in the project.**
-**  
-
-## 📌 Target  
   
-Ensure the correct integration and transfer of power generation data from Hoymiles to Erco Energy's database, facilitating its monitoring and analysis. 
-
 
 <p id="diagrams" >
     
@@ -102,22 +83,43 @@ Este diagrama UML describe las clases y métodos de la aplicación, organizados 
 
 Fetching data from hoymiles API.
 
-### Attributes:
-- **LOG_FILE** (str): Path to the log file.
-- **MAX_LOG_SIZE** (int): Maximum allowed log file size in bytes.
-- **logger** (logging.Logger): Logger instance for saving class logs.
-- **config_data** (ConfigHandler): Config instance for getting query settings.
-- **key** (str): API key for fetching data from Hoymiles API.
-- **hour** (int): Current date for fetching data.
+    HoymileReport class provides functionality to interact with the Hoymiles API
+    to fetch, cache, and process information about plants and their microinverters.
 
-### Methods:
-- **__post_init__()**: Initialize self.MAX_RETRIES.
-- **get_list_plants() -> list**: Gets the list of the available plants.
-- **get_list_microinverters_per_plant() -> list**: Gets the list of the assigned microinverters per plant.
-- **get_data_microinverters_per_plant() -> list**: Gets the data of each microinverter per plant.
-- **__get_total_energy() -> str**: Get the total energy of the plant.
-- **__get_plant_status() -> dict**: Get the operation states of the plant.
+    This class is designed to:
+    - Fetch and cache a list of plants.
+    - Fetch and cache microinverters associated with each plant.
+    - Fetch daily generation data for each microinverter.
+    - Retrieve additional information such as total energy generated and plant status.
 
+    Attributes:
+        logger (logging.Logger): Logger instance for capturing logs and errors.
+        config_data (ConfigHandler): Configuration object with API URLs, retry policies, etc.
+        key (str): API key for authenticating requests.
+        hour (int): Current hour used to determine cache refresh logic.
+        MAX_RETRIES (int): Max attempts to retry API calls on failure (set during initialization).
+
+    Methods:
+        __post_init__():
+            Loads MAX_RETRIES from configuration.
+
+        get_list_plants() -> list:
+            Retrieves a list of solar plants from the Hoymiles API.
+            Caches results in a local JSON file and refreshes data based on the current hour.
+
+        get_list_microinverters_per_plant() -> list:
+            For each plant, retrieves the list of microinverter serial numbers.
+            Caches results and refreshes them based on the configured hour.
+
+        get_data_microinverters_per_plant() -> list:
+            For each plant and its microinverters, retrieves generation data,
+            total energy, and plant status.
+
+        __get_total_energy(id_plant: int) -> str:
+            Retrieves the total energy generated for a given plant ID.
+
+        __get_plant_status(id_plant: int) -> dict:
+            Retrieves the status of a given plant (e.g., online/offline).
 
 <p align="center">
 <img  align="center" src="./img/helper.png">
@@ -125,14 +127,15 @@ Fetching data from hoymiles API.
 
 Manages log file size and ensures it does not exceed a defined limit.
 
-### Attributes:
-- **LOG_FILE** (str): Path to the log file.
-- **MAX_LOG_SIZE** (int): Maximum allowed log file size in bytes.
+    Manages log file size and ensures it does not exceed a defined limit.
 
-### Methods:
-- **check_log_sizes()**: Deletes the log file if it exceeds the maximum size.
+    Attributes:
+        LOG_FILE (str): Path to the log file.
+        MAX_LOG_SIZE (int): Maximum allowed log file size in bytes.
 
-
+    Methods:
+        check_log_sizes(): Deletes the log file if it exceeds the maximum size.
+    
 
 
 
@@ -143,12 +146,55 @@ Manages log file size and ensures it does not exceed a defined limit.
 
 Manages log file size and ensures it does not exceed a defined limit.
 
-### Attributes:
-- **LOG_FILE** (str): Path to the log file.
-- **MAX_LOG_SIZE** (int): Maximum allowed log file size in bytes.
 
-### Methods:
-- **check_log_sizes()**: Deletes the log file if it exceeds the maximum size.
+    
+    Handles application configuration using configparser.
+
+    Attributes:
+        config_file (str): Path to the configuration file.
+        config (configparser.ConfigParser): Parser instance for reading configuration.
+
+    Methods:
+        get_url() -> str:
+            Returns the base API endpoint URL from the config.
+        
+        get_plant_list() -> str:
+            Returns the endpoint for retrieving the plant list.
+        
+        get_specified_plant() -> str:
+            Returns the endpoint for retrieving a specified plant's data.
+        
+        get_data_microinverter() -> str:
+            Returns the endpoint for retrieving microinverter data.
+        
+        get_total_energy() -> str:
+            Returns the endpoint for retrieving total energy data.
+
+        get_plant_status() -> str:
+            Returns the endpoint for retrieving plant status.
+
+        get_url_token() -> str:
+            Returns the endpoint for obtaining a token.
+        
+        get_url_enrg() -> str:
+            Returns the endpoint for the energy report.
+        
+        get_retries() -> str:
+            Returns the maximum number of retries from settings.
+        
+        get_log_size() -> str:
+            Returns the log file size limit from settings.
+        
+        get_name_log() -> str:
+            Returns the log file name from settings.
+        
+        get_json_time() -> str:
+            Returns the JSON timestamp format from settings.
+        
+        get_interval_time() -> int:
+            Returns the time interval (in seconds or minutes) from settings.
+    
+
 
 <p align="center">
 <img  align="center" src="./img/config.png">
