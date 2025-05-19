@@ -21,7 +21,7 @@ if __name__ == "__main__":
     data_plants=hoymiles.order_information_plants()
     
     payloads=hoymiles.create_payload(data_plants)
-    # hoymiles.information_processing(data_plants)
+    hoymiles.information_processing(data_plants)
     
     get_token= AuthService(logger=logger,url=config_handler.get_url_token(),credential=config_key.get_credentials())
     token=get_token.get_token()
