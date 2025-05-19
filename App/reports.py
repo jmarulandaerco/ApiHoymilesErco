@@ -532,7 +532,7 @@ class HoymileReport:
                 data_plant.append(payload.__dict__)
 
             payload_plant.append({
-                "GENERATION": int(generation)/1000,
+                "GENERATION": float(generation)/1000,
                 "ID_PLANT" : id_plant,
                 "DATE_GENERATION" : date_str_formatted,
                 "STATE_OPERATION": alarms,
