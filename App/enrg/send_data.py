@@ -43,6 +43,8 @@ class PostRequester:
 
                 if response.status_code != 200:
                     self.logger.error(f"[ERROR]: HTTP {response.status_code} - Failed to send data.")
+                    self.logger.error(f"[ERROR_MESSAGE]: HTTP {response.message} - Failed to send data.")
+
                     continue
 
                 self._handle_response(response.json(), payload)

@@ -558,7 +558,5 @@ class HoymileReport:
                 
                 else:
                     microinverters["generation"] = []
-
-       
  
         return data
