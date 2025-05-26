@@ -21,28 +21,34 @@ class LoggerHandler:
     name: str = "app_logger"
 
     def __post_init__(self):
+        from utils.helper import HelperReport
         helper = HelperReport()
         helper.check_log_sizes()
+
         self.logger = logging.getLogger(self.name)
         self.logger.setLevel(logging.INFO)
 
-        # ✅ Evita agregar múltiples veces los mismos handlers
-        if not self.logger.handlers:
-            console_handler = logging.StreamHandler()
-            console_handler.setLevel(logging.INFO)
+        # 🧹 Limpia todos los handlers previos (evita duplicados en reinicios)
+        if self.logger.hasHandlers():
+            self.logger.handlers.clear()
 
-            configHandler = ConfigHandler("config.ini")
-            file_handler = logging.FileHandler(
-                str(configHandler.get_name_log()), mode="a")
-            file_handler.setLevel(logging.INFO)
+        # Configurar handlers
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.INFO)
 
-            formatter = logging.Formatter(
-                "%(asctime)s - %(levelname)s - %(message)s")
-            console_handler.setFormatter(formatter)
-            file_handler.setFormatter(formatter)
+        from utils.configHandler import ConfigHandler
+        configHandler = ConfigHandler("config.ini")
+        file_handler = logging.FileHandler(
+            str(configHandler.get_name_log()), mode="a")
+        file_handler.setLevel(logging.INFO)
 
-            self.logger.addHandler(console_handler)
-            self.logger.addHandler(file_handler)
+        formatter = logging.Formatter(
+            "%(asctime)s - %(levelname)s - %(message)s")
+        console_handler.setFormatter(formatter)
+        file_handler.setFormatter(formatter)
+
+        self.logger.addHandler(console_handler)
+        self.logger.addHandler(file_handler)
+
     def get_logger(self):
         return self.logger
-
