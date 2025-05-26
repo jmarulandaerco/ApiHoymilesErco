@@ -18,7 +18,7 @@ class LoggerHandler:
     Methods:
         get_logger() -> logging.Logger: Returns the configured logger instance.
     """
-    name: str = __name__
+    name: str = "app_logger"
 
     def __post_init__(self):
         helper = HelperReport()
