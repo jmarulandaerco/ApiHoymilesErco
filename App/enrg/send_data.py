@@ -49,8 +49,8 @@ class PostRequester:
 
                 self._handle_response(response.json(), payload)
 
-            except Exception:
-                self.logger.error(f"[EXCEPTION]: Error sending payload: {payload}")
+            except Exception as e:
+                self.logger.error(f"[EXCEPTION]: Error sending payload: {e}")
 
     def _handle_response(self, result: Dict, payload: Dict):
         results = result.get("data", {}).get("results", [])
